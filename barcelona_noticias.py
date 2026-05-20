@@ -5,9 +5,11 @@ from datetime import datetime
 HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; BarcelonaNewsBot/1.0)"}
 
 FEEDS = {
-    "ciudad": "https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/seccion/espana/catalunya/portada",
-    "deportes": "https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/seccion/deportes/portada",
+    "ciudad": "https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/espana/portada",
+    "deportes": "https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/deportes/portada",
 }
+
+KEYWORDS_CIUDAD = {"barcelona", "cataluña", "catalunya", "catalán", "catalan"}
 
 KEYWORDS_BARCA = {"barcelona", "barça", "barca", "blaugrana", "culé", "cule"}
 FICHERO_SALIDA = "noticias_barcelona.md"
@@ -54,7 +56,12 @@ def main():
     print(f"   Generado: {ahora}\n")
 
     items_ciudad = obtener_items_rss(FEEDS["ciudad"])
-    noticias_ciudad = [extraer_titulo_y_link(i) for i in items_ciudad if extraer_titulo_y_link(i)[0]]
+    noticias_ciudad = []
+    for item in items_ciudad:
+        titulo, link = extraer_titulo_y_link(item)
+        descripcion = item.findtext("description", "")
+        if titulo and any(kw in (titulo + " " + descripcion).lower() for kw in KEYWORDS_CIUDAD):
+            noticias_ciudad.append((titulo, link))
 
     items_deportes = obtener_items_rss(FEEDS["deportes"])
     noticias_barca = []
