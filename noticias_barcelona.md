@@ -1,11 +1,11 @@
 # 🗞️ Noticias de Barcelona — El País
 
-> Actualizado: 20/05/2026 11:27:40
+> Actualizado: 20/05/2026 11:29:07
 
 ## 🏙️ Ciudad de Barcelona / Cataluña
 
-_Sin noticias encontradas._
-
+- [El Gobierno salva el primer escollo de los Presupuestos gracias a ERC](https://elpais.com/politica/2020/02/27/actualidad/1582790343_062149.html#?ref=rss&format=simple&link=link)
+- [Testimonios de un golpe a la economía de Barcelona](https://elpais.com/elpais/2020/02/13/album/1581614975_552419.html#?ref=rss&format=simple&link=link)
 
 ## ⚽ FC Barcelona
 
@@ -14,4 +14,4 @@ _Sin noticias encontradas._
 - [Hansi Flick firma su renovación con el FC Barcelona hasta 2028](https://elpais.com/deportes/futbol/2026-05-18/hansi-flick-firma-su-renovacion-con-el-fc-barcelona-hasta-2028.html)
 
 ---
-_Total: 0 noticias de ciudad · 3 del Barça_
+_Total: 2 noticias de ciudad · 3 del Barça_
