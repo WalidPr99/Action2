@@ -10,6 +10,7 @@ FEEDS = {
 }
 
 KEYWORDS_BARCA = {"barcelona", "barça", "barca", "blaugrana", "culé", "cule"}
+FICHERO_SALIDA = "noticias_barcelona.md"
 
 
 def obtener_items_rss(url):
@@ -34,28 +35,27 @@ def contiene_barcelona(titulo, descripcion=""):
     return any(kw in texto for kw in KEYWORDS_BARCA)
 
 
-def imprimir_seccion(titulo_seccion, noticias):
-    print(f"\n{'='*60}")
-    print(f"  {titulo_seccion}")
-    print(f"{'='*60}")
+def construir_seccion_md(titulo_seccion, noticias):
+    lineas = [f"\n## {titulo_seccion}\n"]
     if not noticias:
-        print("  Sin noticias encontradas.")
-        return
-    for i, (titulo, link) in enumerate(noticias, 1):
-        print(f"\n  {i}. {titulo}")
-        if link:
-            print(f"     🔗 {link}")
+        lineas.append("_Sin noticias encontradas._\n")
+    else:
+        for titulo, link in noticias:
+            if link:
+                lineas.append(f"- [{titulo}]({link})")
+            else:
+                lineas.append(f"- {titulo}")
+    return "\n".join(lineas)
 
 
 def main():
+    ahora = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     print(f"\n🗞️  NOTICIAS DE BARCELONA — El País")
-    print(f"   Generado: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}")
+    print(f"   Generado: {ahora}\n")
 
-    # Noticias de la ciudad (feed Cataluña completo, sin filtro)
     items_ciudad = obtener_items_rss(FEEDS["ciudad"])
     noticias_ciudad = [extraer_titulo_y_link(i) for i in items_ciudad if extraer_titulo_y_link(i)[0]]
 
-    # Noticias del Barça (feed Deportes filtrado por keywords)
     items_deportes = obtener_items_rss(FEEDS["deportes"])
     noticias_barca = []
     for item in items_deportes:
@@ -64,13 +64,18 @@ def main():
         if titulo and contiene_barcelona(titulo, descripcion):
             noticias_barca.append((titulo, link))
 
-    imprimir_seccion("🏙️  CIUDAD DE BARCELONA / CATALUÑA", noticias_ciudad)
-    imprimir_seccion("⚽  FC BARCELONA", noticias_barca)
+    # Construir markdown
+    contenido_md = f"# 🗞️ Noticias de Barcelona — El País\n\n> Actualizado: {ahora}\n"
+    contenido_md += construir_seccion_md("🏙️ Ciudad de Barcelona / Cataluña", noticias_ciudad)
+    contenido_md += "\n"
+    contenido_md += construir_seccion_md("⚽ FC Barcelona", noticias_barca)
+    contenido_md += f"\n\n---\n_Total: {len(noticias_ciudad)} noticias de ciudad · {len(noticias_barca)} del Barça_\n"
 
-    total = len(noticias_ciudad) + len(noticias_barca)
-    print(f"\n{'='*60}")
-    print(f"  ✅ Total: {len(noticias_ciudad)} noticias de ciudad · {len(noticias_barca)} del Barça")
-    print(f"{'='*60}\n")
+    with open(FICHERO_SALIDA, "w", encoding="utf-8") as f:
+        f.write(contenido_md)
+
+    print(contenido_md)
+    print(f"✅ Fichero guardado: {FICHERO_SALIDA}")
 
 
 if __name__ == "__main__":

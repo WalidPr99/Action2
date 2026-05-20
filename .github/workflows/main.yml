@@ -7,6 +7,9 @@ jobs:
   scraper-job:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write
+
     steps:
     - name: 1. Descargando el código del repositorio
       uses: actions/checkout@v4
@@ -21,5 +24,13 @@ jobs:
         python -m pip install --upgrade pip
         pip install requests
 
-    - name: 4. Noticias de Barcelona (El País RSS)
+    - name: 4. Generando noticias de Barcelona
       run: python barcelona_noticias.py
+
+    - name: 5. Guardando resultado en el repositorio
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git add noticias_barcelona.md
+        git diff --cached --quiet || git commit -m "bot: actualizar noticias_barcelona.md [$(date +'%d/%m/%Y %H:%M')]"
+        git push
