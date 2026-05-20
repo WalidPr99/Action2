@@ -5,7 +5,10 @@ from datetime import datetime
 HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; BarcelonaNewsBot/1.0)"}
 
 FEEDS = {
-    "ciudad": "https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/espana/portada",
+    "ciudad": [
+        "https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/espana/portada",
+        "https://elpais.com/rss/elpais/portada_completo.xml",
+    ],
     "deportes": "https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/deportes/portada",
 }
 
@@ -55,13 +58,15 @@ def main():
     print(f"\n🗞️  NOTICIAS DE BARCELONA — El País")
     print(f"   Generado: {ahora}\n")
 
-    items_ciudad = obtener_items_rss(FEEDS["ciudad"])
     noticias_ciudad = []
-    for item in items_ciudad:
-        titulo, link = extraer_titulo_y_link(item)
-        descripcion = item.findtext("description", "")
-        if titulo and any(kw in (titulo + " " + descripcion).lower() for kw in KEYWORDS_CIUDAD):
-            noticias_ciudad.append((titulo, link))
+    vistos = set()
+    for feed_url in FEEDS["ciudad"]:
+        for item in obtener_items_rss(feed_url):
+            titulo, link = extraer_titulo_y_link(item)
+            descripcion = item.findtext("description", "")
+            if titulo and link not in vistos and any(kw in (titulo + " " + descripcion).lower() for kw in KEYWORDS_CIUDAD):
+                noticias_ciudad.append((titulo, link))
+                vistos.add(link)
 
     items_deportes = obtener_items_rss(FEEDS["deportes"])
     noticias_barca = []
